@@ -1,5 +1,5 @@
-declare namespace EnvConfig {
-    export class EnvConfig {
+declare namespace DynamicConfig {
+    export class DynamicConfig {
         constructor();
         has(key: string): boolean;
         hasEnv(key: string): boolean;
