@@ -1,0 +1,14 @@
+{
+    "__configSplit": ".",
+    "test": "test",
+    "test1": {
+        "test2": {
+            "test3": "Found it"
+        }
+    },
+    "test5": {
+        "test6": {
+            "test7": ""
+        }
+    }
+}
