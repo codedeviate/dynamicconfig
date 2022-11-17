@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import parserJson from './parsers/json.js';
 
-export class EnvConfig {
+export class DynamicConfig {
   constructor() {
     this.config = null
     try {
@@ -23,7 +23,8 @@ export class EnvConfig {
         }
     }
 
-    console.log('fileList', fileList);
+    fileList.push(`${this.path}${this.script}/${this.env}.json`);
+    fileList.push(`${this.path}${this.script}/default.json`);
 
     fileList.forEach((file) => {
       if(this.config === null && fs.existsSync(file)) {
@@ -38,6 +39,9 @@ export class EnvConfig {
       }
     });
 
+    if(this.config === null) {
+      this.config = {};
+    }
   }
 
   setConfiguration(config) {
