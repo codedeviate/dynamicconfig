@@ -25,7 +25,15 @@ There is a fallback to a config file with the base name *default*. The priority 
 ### CONFIG_FILE and CONFIG_PATH
 The base dirctory is the same directory as the entry file. But ths can be altered by adding the environment variable CONFIG_PATH
 
+By adding environment variable *CONFIG_FILE* the value here will top the priority list. Note that if the file given doesn't exist then the standard priority list will be used.
+
+If the *CONFIG_FILE* is a relative path then the default path will be used. If the *CONFIG_PATH* is an absolute path then this will be used.
+
+#### Examples ####
 So if we wish to load a development configuration from an entry file called server.js then the following order is processed
+```bash
+node server.js
+```
 1. ./server/development.json
 2. ./config/development.json
 3. ./development.json
@@ -38,10 +46,6 @@ So if we wish to load a development configuration from an entry file called serv
 10. ./server/default.ini
 11. ./config/default.ini
 12. ./default.ini
-
-By adding environment variable *CONFIG_FILE* the value here will top the priority list. Note that if the file given doesn't exist then the standard priority list will be used.
-
-If the *CONFIG_FILE* is a relative path then the default path will be used. If the *CONFIG_PATH* is an absolute path then this will be used.
 
 ```bash
 CONFIG_FILE=test.json node server.js
@@ -137,19 +141,19 @@ If hostname doesn't exist neither in the environment nor in the configuration fi
 
 ### Force type of config
 ```bash
-server:/dynamicconfig/ $ CONFIG_TYPE=ini node example/basic.js
+CONFIG_TYPE=ini node example/basic.js
 ```
 This will only use files with an *ini* extention
 
 ### Set execution environment
 ```bash
-server:/dynamicconfig/ $ NODE_ENV=development node example/basic.js
+NODE_ENV=development node example/basic.js
 ```
 This will use a config files named *development.\**. If none is found it will try to find a config file named *default.\**.
 
 ### Set execution environment and force type of config
 ```bash
-server:/dynamicconfig/ $ NODE_ENV=development CONFIG_TYPE=json node example/basic.js
+NODE_ENV=development CONFIG_TYPE=json node example/basic.js
 ```
 This will use a config files named *development.json*. If none is found it will try to find a config file named *default.json*.
 
