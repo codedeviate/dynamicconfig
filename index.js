@@ -30,6 +30,7 @@ export class DynamicConfig {
     supportedExtensions.forEach((extension) => {
       if (!configType || configType === extension) {
         fileList.push(`${this.path}${this.script}/${this.env}.${extension}`);
+        fileList.push(`${this.path}config/${this.env}.${extension}`);
         fileList.push(`${this.path}${this.env}.${extension}`);
       }
     });
@@ -37,6 +38,7 @@ export class DynamicConfig {
     supportedExtensions.forEach((extension) => {
       if (!configType || configType === extension) {
         fileList.push(`${this.path}${this.script}/default.${extension}`);
+        fileList.push(`${this.path}config/default.${extension}`);
         fileList.push(`${this.path}default.${extension}`);
       }
     });
