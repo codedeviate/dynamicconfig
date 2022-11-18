@@ -4,8 +4,10 @@ import parserJson from './parsers/json.js';
 import parserIni from './parsers/ini.js';
 
 export class DynamicConfig {
-  constructor() {
+  constructor(blowOnFuse = true) {
+    this.blowOnFuse = blowOnFuse;
     this.config = null
+    this.fuseList = {};
     try {
       this.path = fs.realpathSync(process.env.CONFIG_PATH || path.dirname(process.argv[1])) + '/';
     } catch (error) {
@@ -34,7 +36,7 @@ export class DynamicConfig {
         fileList.push(`${this.path}${this.env}.${extension}`);
       }
     });
-    // Add åaths to default config files
+    // Add paths to default config files
     supportedExtensions.forEach((extension) => {
       if (!configType || configType === extension) {
         fileList.push(`${this.path}${this.script}/default.${extension}`);
@@ -92,7 +94,7 @@ export class DynamicConfig {
   }
 
   getConfig(key, defaultValue = null) {
-    if(key === undefined) {
+    if (key === undefined) {
       return this.config;
     }
     if (this.config[key] === undefined) {
@@ -132,7 +134,46 @@ export class DynamicConfig {
   }
 
   set(key, value) {
-    this.config[key] = value;
+    const keys = key.split(this.configSplit || this.config['__configSplit'] || '.');
+    if (this.fuseList[keys.join('.')] === true) {
+      if (this.blowOnFuse) {
+        throw new Error(`Key ${key} is fused`);
+      } else {
+        return;
+      }
+    }
+    let config = this.config;
+    while (keys.length > 1) {
+      const subkey = keys.shift();
+      if (config[subkey] === undefined) {
+        config[subkey] = {};
+      }
+      config = config[subkey];
+    }
+    const lastKey = keys.shift();
+    if (value === undefined) {
+      delete config[lastKey];
+    } else {
+      config[lastKey] = value;
+    }
+  }
+
+  addFuse(...keys) {
+    keys.forEach((key) => {
+      if (Array.isArray(key)) {
+        key.forEach((subkey) => {
+          subkey = subkey.split(this.configSplit || this.config['__configSplit'] || '.').join('.');
+          this.fuseList[subkey] = true;
+        });
+      } else {
+        key = key.split(this.configSplit || this.config['__configSplit'] || '.').join('.');
+        this.fuseList[key] = true;
+      }
+    });
+  }
+
+  blowOnFuse() {
+    return this.blowOnFuse;
   }
 
   getSplit() {

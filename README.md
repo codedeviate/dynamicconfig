@@ -4,6 +4,88 @@ Dynamic configuration storage that can use files and/or environment.
 
 Different sets of configuration can be used.
 
+## Installation
+```bash
+npm install dynamicconfig --save
+```
+## Typescript
+Batteries are included.
+
+This module contains a typescript declaration.
+
+## Fused entries
+Keys can be protected by a fuse.
+
+A fused key can't have its value changed by calling the set function.
+
+If the configuration class is instantiated without any boolean parameter then the attempt to set a fused value will result in throwing an exception. The the class is instantiated with false as a parameter then set will quietly return when an attempt is made to set a fused value.
+
+```javascript
+const dynConf = new DynamicConfig();
+...
+dynConf.addFuse('fused.value');
+...
+dynConf.set('fused.value', 'new value');
+```
+This will result in throwing an exception.
+
+```javascript
+const dynConf = new DynamicConfig(false);
+...
+dynConf.addFuse('fused.value');
+...
+dynConf.set('fused.value', 'new value');
+```
+This will just return quietly without changing any values.
+
+## Functions
+
+### get(key, defaultValue = null, throwOnDefault = false): value
+Will try to find the *key* from the environment or the config (in that order). If the key isn't found then the default value will be returned. If not default value has been supplied then null will be retruned.
+
+If the parameter throwOnDefault is set to true then an exception will be thrown if the key isn't found.
+
+If the key is omitted (or set to undefined) the config object wil be returned.
+
+### getConfig(key, defaultValue = null): [value, keyFound]
+Will try to find the key in the config.
+
+The return value is an array where the first value is the values that is returned. The second value is a boolean that indicated if the value was found or not.
+### getEnv(key, defaultValue = null): [value, keyFound]
+Will try to find the key in the environment.
+
+The return value is an array where the first value is the values that is returned. The second value is a boolean that indicated if the value was found or not.
+
+### has(key): boolean
+Returns a boolean that indicates if the key can be found in either the environment or the config.
+
+### hasConfig(key): boolean
+Returns a boolean that indicates if the key can be found in the config.
+
+### hasEnv(key): boolean
+Returns a boolean that indicates if the key can be found in the environment.
+
+### set(key, value)
+Sets a key in the config to the supplied value
+
+### addFuse(key)
+Will create a fuse for the supplied key
+
+If multiple arguments is supplied then fuses will be created for these keys as well.
+
+If an array is supplied as an argument then the values of this array will be used as keys to fuse.
+
+### blowOnFuse(): boolean
+Returns true if an exception will be thrown when trying to set a fused key.
+
+Returns false if set will return quietly when trying to set a fused key.
+
+### setConfiguration(object)
+
+### getSplit(): string
+
+### setSplit(delimiter)
+
 ## Config file priority
 If a config file is added from the env variable CONFIG_FILE then this have the top priority.
 
