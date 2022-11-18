@@ -1,5 +1,6 @@
 {
     "__configSplit": ".",
+    "filename": "example/basic/development.json",
     "test": "test",
     "test1": {
         "test2": {
