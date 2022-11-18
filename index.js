@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import parserJson from './parsers/json.js';
+import parserIni from './parsers/ini.js';
 
 export class DynamicConfig {
   constructor() {
@@ -16,30 +17,49 @@ export class DynamicConfig {
 
     const fileList = [];
     if (process.env.CONFIG_FILE) {
-        if (process.env.CONFIG_FILE.indexOf('/') == 0) {
-          fileList.push(process.env.CONFIG_FILE);
-        } else {
-          fileList.push(`${this.path}${process.env.CONFIG_FILE}`);
-        }
+      if (process.env.CONFIG_FILE.indexOf('/') == 0) {
+        fileList.push(process.env.CONFIG_FILE);
+      } else {
+        fileList.push(`${this.path}${process.env.CONFIG_FILE}`);
+      }
     }
 
-    fileList.push(`${this.path}${this.script}/${this.env}.json`);
-    fileList.push(`${this.path}${this.script}/default.json`);
-
-    fileList.forEach((file) => {
-      if(this.config === null && fs.existsSync(file)) {
-        const data = fs.readFileSync(file, 'utf8');
-        if(file.match(/\.json$/)) {
-          try {
-            this.config = new parserJson().parse(data);
-          } catch (error) {
-            this.config = null;
-          }
-        }
+    const supportedExtensions = ['json', 'ini'];
+    const configType = (process.env.CONFIG_TYPE || '').toLowerCase();
+    // Add paths to config files based on environment
+    supportedExtensions.forEach((extension) => {
+      if (!configType || configType === extension) {
+        fileList.push(`${this.path}${this.script}/${this.env}.${extension}`);
+        fileList.push(`${this.path}${this.env}.${extension}`);
+      }
+    });
+    // Add åaths to default config files
+    supportedExtensions.forEach((extension) => {
+      if (!configType || configType === extension) {
+        fileList.push(`${this.path}${this.script}/default.${extension}`);
+        fileList.push(`${this.path}default.${extension}`);
       }
     });
 
-    if(this.config === null) {
+    fileList.forEach((file) => {
+      try {
+        if (this.config === null && fs.existsSync(file)) {
+          let fileExtension = configType || path.extname(file).substring(1).toLowerCase();
+          const data = fs.readFileSync(file, 'utf8');
+          if (fileExtension === 'json') {
+            this.config = new parserJson().parse(data);
+          } else if (fileExtension === 'ini') {
+            this.config = new parserIni().parse(data);
+          } else {
+            throw new Error(`Unsupported file extension: ${fileExtension}`);
+          }
+        }
+      } catch (error) {
+        this.config = null;
+      }
+    });
+
+    if (this.config === null) {
       this.config = {};
     }
   }
@@ -70,6 +90,9 @@ export class DynamicConfig {
   }
 
   getConfig(key, defaultValue = null) {
+    if(key === undefined) {
+      return this.config;
+    }
     if (this.config[key] === undefined) {
       if (key === '__configSplit') {
         return [this.configSplit || this.config['__configSplit'] || '.', true];

@@ -17,3 +17,4 @@ console.log('Does test1.test2.test4 exist', dynConf.has('test1.test2.test4'));
 console.log('Does test1.test4.test3 exist', dynConf.has('test1.test4.test3'));
 console.log('Does test4.test2.test3 exist', dynConf.has('test4.test2.test3'));
 console.log('Does test5.test6.test7 exist', dynConf.has('test5.test6.test7'));
+console.log('Show the entire config', dynConf.getConfig());
