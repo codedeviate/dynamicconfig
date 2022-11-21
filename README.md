@@ -8,6 +8,12 @@ Different sets of configuration can be used.
 ```bash
 npm install @codedv8/dynamicconfig --save
 ```
+
+Installing from GitHub
+```bash
+npm install https://github.com/codedeviate/dynamicconfig.git --save
+```
+
 ## Typescript
 Batteries are included.
 
@@ -234,7 +240,7 @@ CONFIG_PATH=/server/app CONFIG_FILE=/config/absolute/test.json node server.js
 Configuration files can have a fallback configuration file.
 ```javascript
 ...
-const devConf = new DynamicConfig();
+const dynConf = require('@codedv8/dynamicconfig');
 ...
 const hostname = dynConf.get("hostname", "localhost");
 ```
@@ -245,7 +251,7 @@ Getting values from the configuration can have a default value or can throw an e
 
 ```javascript
 ...
-const dynConf = new DynamicConfig();
+const dynConf = require('@codedv8/dynamicconfig');
 ...
 const hostname = dynConf.get("hostname", null, true);
 ```
