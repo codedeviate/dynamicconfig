@@ -17,7 +17,7 @@ console.log('Does test1.test4.test3 exist', dynConf.has('test1.test4.test3'));
 console.log('Does test4.test2.test3 exist', dynConf.has('test4.test2.test3'));
 console.log('Does test5.test6.test7 exist', dynConf.has('test5.test6.test7'));
 dynConf.set('testA.testB.testC', 'test');
-console.log('Show the entire config', dynConf.getConfig());
+console.log('Show the entire config', JSON.stringify(dynConf.getConfig(), undefined, "  "));
 dynConf.addFuse('testA.testB.testC');
 dynConf.addFuse('testA.testB.testC', 'testA.testB.testD');
 dynConf.addFuse(['testA.testB.testC', 'testA.testB.testD']);
