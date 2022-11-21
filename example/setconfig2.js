@@ -1,6 +1,10 @@
 const devConf = require('../');
 
 const newConfig = {
+    test1: "test1"
+};
+devConf.setConfiguration(newConfig);
+const newConfig2 = {
     test1: {
         test2: {
             test3: 'test3',
@@ -21,8 +25,6 @@ const newConfig = {
         }
     }
 };
-devConf.setConfiguration(newConfig);
-devConf.setBlowOnFuse();
 devConf.fuseAll();
-devConf.setConfiguration(newConfig);
-console.log(JSON.stringify(devConf.get(), null, '  '));
+const success = devConf.setConfiguration(newConfig2);
+console.log('How did we do?', success ? 'Success' : 'Failure');

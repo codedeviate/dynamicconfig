@@ -211,6 +211,10 @@ Returns false if set will return quietly when trying to set a fused key.
 ### setConfiguration(object)
 Set the entire configuration object.
 
+If the new configuration contain any fused entries it will be the same as setting an fused entry.
+
+If the setting of a new object fails due to fused values then the entire configuration will be reverted back to the previous state.
+
 
 ### getSplit(): string
 Get the split character used for *get* and *set*

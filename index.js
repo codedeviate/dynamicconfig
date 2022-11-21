@@ -79,12 +79,20 @@ class DynamicConfig {
     const oldConfig = this.config;
     this.config = { ...config };
     const self = this;
+    let foundError = false;
     this.listFuseable((key) => {
       if (self.fuseList[key] !== undefined) {
-        self.config = oldConfig;
-        throw new Error(`Key ${key} already exists`);
+        foundError = true;
       }
     });
+    if (foundError) {
+      this.config = oldConfig;
+      if (this.blowOnFuse) {
+        throw new Error(`Key ${key} already exists`);
+      }
+      return false;
+    }
+    return true;
   }
 
   hasEnv(key) {
