@@ -1,4 +1,4 @@
-export default class parserJson {
+class parserJson {
   constructor() {
     this.type = 'json';
   }
@@ -7,3 +7,5 @@ export default class parserJson {
     return JSON.parse(data);
   }
 };
+
+module.exports = parserJson;

@@ -1,9 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import parserJson from './parsers/json.js';
-import parserIni from './parsers/ini.js';
+const fs = require('fs');
+const path = require('path');
+const parserJson = require('./parsers/json.js');
+const parserIni = require('./parsers/ini.js');
 
-export class DynamicConfig {
+class DynamicConfig {
   constructor(blowOnFuse = true) {
     this.blowOnFuse = blowOnFuse;
     this.config = null
@@ -184,3 +184,4 @@ export class DynamicConfig {
   }
 }
 
+module.exports = DynamicConfig;

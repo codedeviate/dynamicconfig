@@ -1,4 +1,4 @@
-export default class parserIni {
+class parserIni {
     constructor() {
         this.type = 'ini';
     }
@@ -47,3 +47,5 @@ export default class parserIni {
         }
     }
 };
+
+module.exports = parserIni;

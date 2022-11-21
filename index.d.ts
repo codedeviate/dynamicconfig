@@ -1,4 +1,7 @@
-export declare class DynamicConfig {
+export as namespace DynamicConfig
+export = DynamicConfig
+
+declare class DynamicConfig {
     constructor(blowOnFuse: boolean = true);
     has(key: string): boolean;
     hasEnv(key: string): boolean;
