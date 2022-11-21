@@ -1,4 +1,4 @@
-import {DynamicConfig} from '../index.js';
+const DynamicConfig = require( '../index.js');
 const dynConf = new DynamicConfig();
 console.log('Get values from DynamicConfig');
 console.log('test1.test2.test3 = ', dynConf.get('test1.test2.test3', 'not found'));
@@ -27,3 +27,7 @@ try {
 } catch (e) {
   console.log('Error: ', e.message);
 }
+console.log("List all fuseable keys");
+dynConf.listFuseable((key) => {
+    console.log('- ', key);
+})

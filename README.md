@@ -75,6 +75,12 @@ If multiple arguments is supplied then fuses will be created for these keys as w
 
 If an array is supplied as an argument then the values of this array will be used as keys to fuse.
 
+### fuseAll()
+Will create a fuse for all keys in the config.
+
+### listFuseable(callback)
+Will loop through the config and call the callback with the key for this entry making it possible to call addFuse for specific entries.
+
 ### blowOnFuse(): boolean
 Returns true if an exception will be thrown when trying to set a fused key.
 

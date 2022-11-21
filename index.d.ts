@@ -10,6 +10,8 @@ declare class DynamicConfig {
     getEnv(key: string, defaultValue: any = null): [any, boolean];
     getConfig(key: string, defaultValue: any = null): [any, boolean];
     addFuse(key: string): void;
+    fuseAll(): void;
+    listFuseable(callback: function): void;
     blowOnFuse(): boolean;
     set(key: string, value: any): void;
     setConfiguration(config: any): void;

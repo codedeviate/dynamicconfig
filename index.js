@@ -13,6 +13,11 @@ class DynamicConfig {
     } catch (error) {
       throw new Error('CONFIG_PATH does not exist');
     }
+    try {
+      this.pathUp = fs.realpathSync(this.path + '../') + '/';
+    } catch (error) {
+      this.pathUp = this.path;
+    }
     this.script = path.basename(process.argv[1], '.js');
     this.env = process.env.NODE_ENV || 'development';
     this.configSplit = process.env.CONFIG_SPLIT || null;
@@ -33,6 +38,7 @@ class DynamicConfig {
       if (!configType || configType === extension) {
         fileList.push(`${this.path}${this.script}/${this.env}.${extension}`);
         fileList.push(`${this.path}config/${this.env}.${extension}`);
+        fileList.push(`${this.pathUp}config/${this.env}.${extension}`);
         fileList.push(`${this.path}${this.env}.${extension}`);
       }
     });
@@ -41,6 +47,7 @@ class DynamicConfig {
       if (!configType || configType === extension) {
         fileList.push(`${this.path}${this.script}/default.${extension}`);
         fileList.push(`${this.path}config/default.${extension}`);
+        fileList.push(`${this.pathUp}config/default.${extension}`);
         fileList.push(`${this.path}default.${extension}`);
       }
     });
@@ -95,7 +102,7 @@ class DynamicConfig {
 
   getConfig(key, defaultValue = null) {
     if (key === undefined) {
-      return this.config;
+      return [this.config, true];
     }
     if (this.config[key] === undefined) {
       if (key === '__configSplit') {
@@ -168,6 +175,40 @@ class DynamicConfig {
       } else {
         key = key.split(this.configSplit || this.config['__configSplit'] || '.').join('.');
         this.fuseList[key] = true;
+      }
+    });
+  }
+
+  fuseAll(obj = undefined, baseKey = '') {
+    if (obj === undefined) {
+      obj = this.config;
+    }
+    Object.keys(obj).forEach((key) => {
+      if (baseKey !== '') {
+        key = `${baseKey}${this.configSplit || this.config['__configSplit'] || '.'}${key}`;
+      }
+      this.addFuse(key);
+      if (obj[key] === Object(obj[key])) {
+        this.fuseAll(obj[key], key)
+      }
+    });
+  }
+
+  listFuseable(callback, obj = undefined, baseKey = '') {
+    if (obj === undefined) {
+      obj = this.config;
+    }
+
+    Object.keys(obj).forEach((key) => {
+      let fullKey = key;
+      if(baseKey !== '') {
+        fullKey = `${baseKey}${this.configSplit || this.config['__configSplit'] || '.'}${fullKey}`;
+      }
+      if (obj[key] === Object(obj[key])) {
+        callback(fullKey);
+        this.listFuseable(callback, obj[key], fullKey);
+      } else {
+        callback(fullKey);
       }
     });
   }
