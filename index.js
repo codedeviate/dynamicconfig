@@ -229,4 +229,4 @@ class DynamicConfig {
   }
 }
 
-module.exports = new DynamicConfig;
+const dynamicConfig = module.exports = new DynamicConfig();

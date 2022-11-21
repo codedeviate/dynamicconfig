@@ -6,7 +6,7 @@ Different sets of configuration can be used.
 
 ## Installation
 ```bash
-npm install dynamicconfig --save
+npm install @codedv8/dynamicconfig --save
 ```
 ## Typescript
 Batteries are included.
@@ -18,10 +18,10 @@ Keys can be protected by a fuse.
 
 A fused key can't have its value changed by calling the set function.
 
-If the configuration class is instantiated without any boolean parameter then the attempt to set a fused value will result in throwing an exception. The the class is instantiated with false as a parameter then set will quietly return when an attempt is made to set a fused value.
+After calling the function setBlowOfFuse any attempt to set a fused value will result in throwing an exception. This value can not be unset.
 
 ```javascript
-const dynConf = new DynamicConfig();
+const dynConf = require('@codedv8/dynamicconfig');
 ...
 dynConf.addFuse('fused.value');
 ...
@@ -30,7 +30,7 @@ dynConf.set('fused.value', 'new value');
 This will result in throwing an exception.
 
 ```javascript
-const dynConf = new DynamicConfig(false);
+const dynConf = require('@codedv8/dynamicconfig');
 ...
 dynConf.addFuse('fused.value');
 ...
@@ -81,6 +81,9 @@ Will create a fuse for all keys in the config.
 ### listFuseable(callback)
 Will loop through the config and call the callback with the key for this entry making it possible to call addFuse for specific entries.
 
+### setBlowOnFuse()
+Will set the internal flag to true which will throw an exception when trying to alter an existing entry.
+
 ### blowOnFuse(): boolean
 Returns true if an exception will be thrown when trying to set a fused key.
 
@@ -103,12 +106,15 @@ Files in a subdirectory with the same name as the base part of the entry file wi
 
 Files in a subdirectory with the name config will come next.
 
+Files in a sibling directory with the name config will come next.
+
 After that configs in the same directory will be processed.
 
 There is a fallback to a config file with the base name *default*. The priority here will be
 1. subdirectory with the same basename as the entry file
 2. subdirectory called config
-3. config file located in the same directory
+3. config file located in a sibling directory called config
+4. config file located in the same directory
 
 ### CONFIG_FILE and CONFIG_PATH
 The base dirctory is the same directory as the entry file. But ths can be altered by adding the environment variable CONFIG_PATH
@@ -124,16 +130,20 @@ node server.js
 ```
 1. ./server/development.json
 2. ./config/development.json
-3. ./development.json
-4. ./server/development.ini
-5. ./config/development.ini
-6. ./development.ini
-7. ./server/default.json
-8. ./config/default.json
-9. ./default.json
-10. ./server/default.ini
-11. ./config/default.ini
-12. ./default.ini
+3. ../config/development.json
+4. ./development.json
+5. ./server/development.ini
+6. ./config/development.ini
+7. ../config/development.ini
+8. ./development.ini
+9. ./server/default.json
+10. ./config/default.json
+11. ../config/default.json
+12. ./default.json
+13. ./server/default.ini
+14. ./config/default.ini
+15. ../config/default.ini
+16. ./default.ini
 
 ```bash
 CONFIG_FILE=test.json node server.js
@@ -141,67 +151,83 @@ CONFIG_FILE=test.json node server.js
 1. ./test.json
 2. ./server/development.json
 3. ./config/development.json
-4. ./development.json
-5. ./server/development.ini
-6. ./config/development.ini
-7. ./development.ini
-8. ./server/default.json
-9. ./config/default.json
-10. ./default.json
-11. ./server/default.ini
-12. ./config/default.ini
-13. ./default.ini
+4. ../config/development.json
+5. ./development.json
+6. ./server/development.ini
+7. ./config/development.ini
+8. ../config/development.ini
+9. ./development.ini
+10. ./server/default.json
+11. ./config/default.json
+12. ../config/default.json
+13. ./default.json
+14. ./server/default.ini
+15. ./config/default.ini
+16. ../config/default.ini
+17. ./default.ini
 
 ```bash
-CONFIG_PATH=/server/config node server.js
+CONFIG_PATH=/server/app node server.js
 ```
-1. /server/config/test.json
-1. /server/config/server/development.json
-2. /server/config/config/development.json
-3. /server/config/development.json
-4. /server/config/server/development.ini
-5. /server/config/config/development.ini
-6. /server/config/development.ini
-7. /server/config/server/default.json
-8. /server/config/config/default.json
-9. /server/config/default.json
-10. /server/config/server/default.ini
-11. /server/config/config/default.ini
-12. /server/config/default.ini
-
-```bash
-CONFIG_PATH=/server/config CONFIG_FILE=test.json node server.js
-```
-1. /server/config/test.json
-2. /server/config/server/development.json
-3. /server/config/config/development.json
+1. /server/app/test.json
+2. /server/app/server/development.json
+3. /server/app/config/development.json
 4. /server/config/development.json
-5. /server/config/server/development.ini
-6. /server/config/config/development.ini
-7. /server/config/development.ini
-8. /server/config/server/default.json
-9. /server/config/config/default.json
-10. /server/config/default.json
-11. /server/config/server/default.ini
-12. /server/config/config/default.ini
-13. /server/config/default.ini
+5. /server/app/development.json
+6. /server/app/server/development.ini
+7. /server/app/config/development.ini
+8. /server/config/development.ini
+9. /server/app/development.ini
+10. /server/app/server/default.json
+11. /server/app/config/default.json
+12. /server/config/default.json
+13. /server/app/default.json
+14. /server/app/server/default.ini
+15. /server/app/config/default.ini
+16. /server/config/default.ini
+17. /server/app/default.ini
 
 ```bash
-CONFIG_PATH=/server/config CONFIG_FILE=/config/absolute/test.json node server.js
+CONFIG_PATH=/server/app CONFIG_FILE=test.json node server.js
+```
+1. /server/app/test.json
+2. /server/app/server/development.json
+3. /server/app/config/development.json
+4. /server/config/development.json
+5. /server/app/development.json
+6. /server/app/server/development.ini
+7. /server/app/config/development.ini
+8. /server/config/development.ini
+9. /server/app/development.ini
+10. /server/app/server/default.json
+11. /server/app/config/default.json
+12. /server/config/default.json
+13. /server/app/default.json
+14. /server/app/server/default.ini
+15. /server/app/config/default.ini
+16. /server/config/default.ini
+17. /server/app/default.ini
+
+```bash
+CONFIG_PATH=/server/app CONFIG_FILE=/config/absolute/test.json node server.js
 ```
 1. /config/absolute/test.json
-2. /server/config/server/development.json
-3. /server/config/config/development.json
+2. /server/app/server/development.json
+3. /server/app/config/development.json
 4. /server/config/development.json
-5. /server/config/server/development.ini
-6. /server/config/config/development.ini
-7. /server/config/development.ini
-8. /server/config/server/default.json
-9. /server/config/config/default.json
-10. /server/config/default.json
-11. /server/config/server/default.ini
-12. /server/config/config/default.ini
-13. /server/config/default.ini
+5. /server/app/development.json
+6. /server/app/server/development.ini
+7. /server/app/config/development.ini
+8. /server/config/development.ini
+9. /server/app/development.ini
+10. /server/app/server/default.json
+11. /server/app/config/default.json
+12. /server/config/default.json
+13. /server/app/default.json
+14. /server/app/server/default.ini
+15. /server/app/config/default.ini
+16. /server/config/default.ini
+17. /server/app/default.ini
 
 
 ## Default values
