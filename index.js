@@ -4,8 +4,8 @@ const parserJson = require('./parsers/json.js');
 const parserIni = require('./parsers/ini.js');
 
 class DynamicConfig {
-  constructor(blowOnFuse = true) {
-    this.blowOnFuse = blowOnFuse;
+  constructor() {
+    this.blowOnFuse = false;
     this.config = null
     this.fuseList = {};
     try {
@@ -213,6 +213,10 @@ class DynamicConfig {
     });
   }
 
+  setBlowOnFuse() {
+    this.blowOnFuse = true;
+  }
+
   blowOnFuse() {
     return this.blowOnFuse;
   }
@@ -225,4 +229,4 @@ class DynamicConfig {
   }
 }
 
-module.exports = DynamicConfig;
+module.exports = new DynamicConfig;

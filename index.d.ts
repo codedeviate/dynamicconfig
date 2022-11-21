@@ -1,8 +1,8 @@
 export as namespace DynamicConfig
-export = DynamicConfig
+export = new DynamicConfig
 
 declare class DynamicConfig {
-    constructor(blowOnFuse: boolean = true);
+    constructor();
     has(key: string): boolean;
     hasEnv(key: string): boolean;
     hasConfig(key: string): boolean;
@@ -13,6 +13,7 @@ declare class DynamicConfig {
     fuseAll(): void;
     listFuseable(callback: function): void;
     blowOnFuse(): boolean;
+    setBlowOnFuse(): void;
     set(key: string, value: any): void;
     setConfiguration(config: any): void;
     getSplit(): string;

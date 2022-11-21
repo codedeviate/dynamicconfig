@@ -1,5 +1,4 @@
-const DynamicConfig = require( '../index.js');
-const dynConf = new DynamicConfig();
+const dynConf = require( '../index.js');
 console.log('Get values from DynamicConfig');
 console.log('test1.test2.test3 = ', dynConf.get('test1.test2.test3', 'not found'));
 console.log('test1.test2.test4 = ', dynConf.get('test1.test2.test4', 'not found'));
