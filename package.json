@@ -1,6 +1,6 @@
 {
   "name": "@codedv8/dynamicconfig",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Dynamic configuration storage that can use files and/or environment. Different sets of configuration can be used. Configuration files can have a fallback configuration file. Getting values from the configuration can have a default value or can throw an error if not found.",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,9 @@
     "example:basic": "node example/basic.js",
     "example:basic:env": "NODE_ENV=development node example/basic.js",
     "example:basic:ini": "CONFIG_TYPE=ini node example/basic.js",
-    "example:basic:env:ini": "NODE_ENV=production CONFIG_TYPE=ini node example/basic.js"
+    "example:basic:env:ini": "NODE_ENV=production CONFIG_TYPE=ini node example/basic.js",
+    "example:fuse": "node example/fuse.js",
+    "example:fuse2": "node example/fuse2.js"
   },
   "repository": {
     "type": "git",

@@ -75,6 +75,74 @@ NODE_ENV=development CONFIG_TYPE=json node example/basic.js
 This will use a config files named *development.json*. If none is found it will try to find a config file named *default.json*.
 
 
+## Code usage
+
+Output the current configuration
+```javascript
+const devConf = require('@codedv8/dynamicconfig');
+console.log(JSON.stringify(devConf.get(), null, '  '));
+```
+
+Get *PORT* with default value *3070*
+```javascript
+const devConf = require('@codedv8/dynamicconfig');
+const PORT = devConf.get('PORT', 3070);
+```
+
+Get and set values without fuse and with fuse
+```javascript
+const devConf = require('@codedv8/dynamicconfig');
+console.log('PORT :', devConf.get('PORT', 3070));
+devConf.set('PORT', 3071);
+console.log('PORT :', devConf.get('PORT', 3070));
+devConf.addFuse('PORT');
+console.log('PORT :', devConf.get('PORT', 3070));
+devConf.set('PORT', 3072);
+console.log('PORT :', devConf.get('PORT', 3070));
+```
+This will print
+```
+PORT : 3070
+PORT : 3071
+PORT : 3071
+PORT : 3071
+```
+
+
+Get and set values without fuse and with fuse where fuses are set to blow
+```javascript
+const devConf = require('@codedv8/dynamicconfig');
+devConf.setBlowOnFuse();
+console.log('PORT :', devConf.get('PORT', 3070));
+devConf.set('PORT', 3071);
+console.log('PORT :', devConf.get('PORT', 3070));
+devConf.addFuse('PORT');
+console.log('PORT :', devConf.get('PORT', 3070));
+devConf.set('PORT', 3072);
+console.log('PORT :', devConf.get('PORT', 3070));
+```
+This will print
+```
+PORT : 3070
+PORT : 3071
+PORT : 3071
+/xxxx/xxxx/xxxx/dynamicconfig/index.js:XXX
+        throw new Error(`Key ${key} is fused`);
+        ^
+Error: Key PORT is fused
+...
+```
+
+
+### Examples in TypeScript
+Get *PORT* with default value *3070*
+```typescript
+import devConf from '@codedv8/dynamicconfig'
+
+const PORT = devConf.get('PORT', 3070)
+```
+
+
 ## Functions
 
 

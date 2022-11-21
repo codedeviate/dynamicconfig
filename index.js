@@ -76,7 +76,15 @@ class DynamicConfig {
   }
 
   setConfiguration(config) {
+    const oldConfig = this.config;
     this.config = { ...config };
+    const self = this;
+    this.listFuseable((key) => {
+      if (self.fuseList[key] !== undefined) {
+        self.config = oldConfig;
+        throw new Error(`Key ${key} already exists`);
+      }
+    });
   }
 
   hasEnv(key) {
@@ -201,7 +209,7 @@ class DynamicConfig {
 
     Object.keys(obj).forEach((key) => {
       let fullKey = key;
-      if(baseKey !== '') {
+      if (baseKey !== '') {
         fullKey = `${baseKey}${this.configSplit || this.config['__configSplit'] || '.'}${fullKey}`;
       }
       if (obj[key] === Object(obj[key])) {
@@ -224,9 +232,11 @@ class DynamicConfig {
   getSplit() {
     return this.configSplit;
   }
+
   setSplit(split) {
     this.configSplit = split;
   }
+
 }
 
 const dynamicConfig = module.exports = new DynamicConfig();
