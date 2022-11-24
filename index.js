@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const parserJson = require('./parsers/json.js');
 const parserIni = require('./parsers/ini.js');
+const { isObject } = require('util');
 
 class DynamicConfig {
   constructor() {
@@ -52,21 +53,33 @@ class DynamicConfig {
       }
     });
 
+    let addedDefault = false;
+    this.config = {};
     fileList.forEach((file) => {
+      let readDefault = false;
+      if(addedDefault === false && path.basename(file).match(/default\./)) {
+        readDefault = true;
+      }
       try {
-        if (this.config === null && fs.existsSync(file)) {
+        if ((readDefault || Object.keys(this.config).length === 0) && fs.existsSync(file)) {
           let fileExtension = configType || path.extname(file).substring(1).toLowerCase();
           const data = fs.readFileSync(file, 'utf8');
           if (fileExtension === 'json') {
-            this.config = new parserJson().parse(data);
+            this.mergeConfiguration(new parserJson().parse(data));
+            if(readDefault) {
+              addedDefault = true;
+            }
           } else if (fileExtension === 'ini') {
-            this.config = new parserIni().parse(data);
+            this.mergeConfiguration(new parserIni().parse(data));
+            if(readDefault) {
+              addedDefault = true;
+            }
           } else {
             throw new Error(`Unsupported file extension: ${fileExtension}`);
           }
         }
       } catch (error) {
-        this.config = null;
+        this.config = {};
       }
     });
 
@@ -91,6 +104,57 @@ class DynamicConfig {
         throw new Error(`Key ${key} already exists`);
       }
       return false;
+    }
+    return true;
+  }
+
+  getValueKeys(obj = undefined) {
+    if (obj === undefined) {
+      obj = this.config;
+    }
+    const keys = [];
+    Object.keys(obj).forEach((key) => {
+      if (isObject(obj[key])) {
+        this.getValueKeys(obj[key]).forEach((subKey) => {
+          keys.push(`${key}.${subKey}`);
+        });
+      } else {
+        keys.push(key);
+      }
+    });
+    return keys;
+  }
+
+  mergeConfiguration(config, root = undefined) {
+    if (root === undefined) {
+      this.getValueKeys(config).forEach((key) => {
+        if (this.fuseList[key] !== undefined) {
+          if (this.blowOnFuse) {
+            throw new Error(`Key ${key} already exists`);
+          }
+          return false;
+        }
+      });
+      root = this.config;
+    }
+    if (typeof (config) === 'object' && !Array.isArray(config)) {
+      Object.keys(config).forEach((key) => {
+        if (root[key] === undefined) {
+          if (typeof (root[key]) === 'object' && !Array.isArray(root[key])) {
+            root[key] = { ...config[key] };
+          } else {
+            root[key] = config[key];
+          }
+        } else {
+          if (typeof (root[key]) === 'object' && !Array.isArray(root[key])) {
+            this.mergeConfiguration(config[key], root[key]);
+          }
+        }
+      });
+    } else {
+      if (root === undefined) {
+        root = config;
+      }
     }
     return true;
   }

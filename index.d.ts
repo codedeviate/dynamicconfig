@@ -16,6 +16,7 @@ declare class DynamicConfig {
     setBlowOnFuse(): void;
     set(key: string, value: any): void;
     setConfiguration(config: any): boolean;
+    mergeConfiguration(config: any): boolean;
     getSplit(): string;
     setSplit(split: string): void;
 }

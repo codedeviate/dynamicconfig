@@ -4,6 +4,8 @@ Dynamic configuration storage that can use files and/or environment.
 
 Different sets of configuration can be used.
 
+If present, a default configuration file will always be merged without overwriting previous data.
+
 
 ## Installation
 Installing from NPM
@@ -51,6 +53,10 @@ dynConf.set('fused.value', 'new value');
 This will just return quietly without changing any values.
 
 
+## Fallback and default configuration
+First of all a configuration matching the enviroment will be loaded. After that the module will search for a default configuration that will be merged without overwriting existing data.
+
+
 ## Usage
 
 
@@ -65,14 +71,16 @@ This will only use files with an *ini* extention
 ```bash
 NODE_ENV=development node example/basic.js
 ```
-This will use a config files named *development.\**. If none is found it will try to find a config file named *default.\**.
+This will use a config files named *development.\**.
+If none is found it will still try to find a config file named *default.\**.
 
 
 ### Set execution environment and force type of config
 ```bash
 NODE_ENV=development CONFIG_TYPE=json node example/basic.js
 ```
-This will use a config files named *development.json*. If none is found it will try to find a config file named *default.json*.
+This will use a config files named *development.json*.
+If none is found it will still try to find a config file named *default.json*.
 
 
 ## Code usage
@@ -214,6 +222,10 @@ Set the entire configuration object.
 If the new configuration contain any fused entries it will be the same as setting an fused entry.
 
 If the setting of a new object fails due to fused values then the entire configuration will be reverted back to the previous state.
+
+
+### mergeConfiguration(object)
+Merge a configuration without overwriting existing values.
 
 
 ### getSplit(): string
