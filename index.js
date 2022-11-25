@@ -10,7 +10,29 @@ class DynamicConfig {
     this.config = null
     this.fuseList = {};
     try {
-      this.path = fs.realpathSync(process.env.CONFIG_PATH || path.dirname(process.argv[1])) + '/';
+      if (process.env.CONFIG_PATH !== undefined) {
+        this.path = process.env.CONFIG_PATH;
+      } else {
+        let s = path.dirname(process.argv[1])
+        if(s.indexOf('node_modules') > -1) {
+          s = s.substring(0, s.indexOf('node_modules') - 1)
+        }
+        while (s !== '/') {
+          if (fs.existsSync(path.join(s, 'package.json'))) {
+            break;
+          } else {
+            const parts = s.split(path.sep);
+            parts.pop();
+            s = parts.join(path.sep);
+          }
+        }
+        if (fs.existsSync(s + '/package.json')) {
+          this.path = s;
+        } else {
+          this.path = path.dirname(process.argv[1])
+        }
+      }
+      this.path = fs.realpathSync(this.path) + '/';
     } catch (error) {
       throw new Error('CONFIG_PATH does not exist');
     }
@@ -37,18 +59,18 @@ class DynamicConfig {
     // Add paths to config files based on environment
     supportedExtensions.forEach((extension) => {
       if (!configType || configType === extension) {
-        fileList.push(`${this.path}${this.script}/${this.env}.${extension}`);
         fileList.push(`${this.path}config/${this.env}.${extension}`);
         fileList.push(`${this.pathUp}config/${this.env}.${extension}`);
+        fileList.push(`${this.path}${this.script}/${this.env}.${extension}`);
         fileList.push(`${this.path}${this.env}.${extension}`);
       }
     });
     // Add paths to default config files
     supportedExtensions.forEach((extension) => {
       if (!configType || configType === extension) {
-        fileList.push(`${this.path}${this.script}/default.${extension}`);
         fileList.push(`${this.path}config/default.${extension}`);
         fileList.push(`${this.pathUp}config/default.${extension}`);
+        fileList.push(`${this.path}${this.script}/default.${extension}`);
         fileList.push(`${this.path}default.${extension}`);
       }
     });
@@ -57,7 +79,7 @@ class DynamicConfig {
     this.config = {};
     fileList.forEach((file) => {
       let readDefault = false;
-      if(addedDefault === false && path.basename(file).match(/default\./)) {
+      if (addedDefault === false && path.basename(file).match(/default\./)) {
         readDefault = true;
       }
       try {
@@ -66,12 +88,12 @@ class DynamicConfig {
           const data = fs.readFileSync(file, 'utf8');
           if (fileExtension === 'json') {
             this.mergeConfiguration(new parserJson().parse(data));
-            if(readDefault) {
+            if (readDefault) {
               addedDefault = true;
             }
           } else if (fileExtension === 'ini') {
             this.mergeConfiguration(new parserIni().parse(data));
-            if(readDefault) {
+            if (readDefault) {
               addedDefault = true;
             }
           } else {
