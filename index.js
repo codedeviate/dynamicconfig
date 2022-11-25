@@ -286,12 +286,13 @@ class DynamicConfig {
       obj = this.config;
     }
     Object.keys(obj).forEach((key) => {
+      let subKey = key;
       if (baseKey !== '') {
-        key = `${baseKey}${this.configSplit || this.config['__configSplit'] || '.'}${key}`;
+        subKey = `${baseKey}${this.configSplit || this.config['__configSplit'] || '.'}${key}`;
       }
-      this.addFuse(key);
+      this.addFuse(subKey);
       if (obj[key] === Object(obj[key])) {
-        this.fuseAll(obj[key], key)
+        this.fuseAll(obj[key], subKey)
       }
     });
   }
