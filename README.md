@@ -243,19 +243,13 @@ After that priority is grouped by type and path.
 
 *json* files have higher priority than *ini* files.
 
-Files in a subdirectory with the same name as the base part of the entry file will have higher priority.
+First the module looks for a subdirectory called *config* at the same path where your *package.json* is located.
 
-Files in a subdirectory with the name config will come next.
+If that is not found then it searches the parent directory for at directory called *config*.
 
-Files in a sibling directory with the name config will come next.
+If that is not found then it searches for a subdirectory in the same location as the *package.json* with the same basename as the executed file.
 
-After that configs in the same directory will be processed.
-
-There is a fallback to a config file with the base name *default*. The priority here will be
-1. subdirectory with the same basename as the entry file
-2. subdirectory called config
-3. config file located in a sibling directory called config
-4. config file located in the same directory
+If that is not found then it searches in the same directory as your *package.json*
 
 
 ### CONFIG_FILE and CONFIG_PATH
@@ -267,91 +261,90 @@ If the *CONFIG_FILE* is a relative path then the default path will be used. If t
 
 
 #### Examples ####
-So if we wish to load a development configuration from an entry file called server.js then the following order is processed
+So if we wish to load a development configuration from an entry file called server.js in a directory called serverapp then the following order is processed
 ```bash
 node server.js
 ```
-1. ./server/development.json
-2. ./config/development.json
-3. ../config/development.json
-4. ./development.json
-5. ./server/development.ini
-6. ./config/development.ini
-7. ../config/development.ini
-8. ./development.ini
-9. ./server/default.json
-10. ./config/default.json
-11. ../config/default.json
-12. ./default.json
-13. ./server/default.ini
-14. ./config/default.ini
-15. ../config/default.ini
-16. ./default.ini
+ 1. <path to apps>/serverapp/config/development.json',
+ 2. <path to apps>/config/development.json',
+ 3. <path to apps>/serverapp/server/development.json',
+ 4. <path to apps>/serverapp/development.json',
+ 5. <path to apps>/serverapp/config/development.ini',
+ 6. <path to apps>/config/development.ini',
+ 7. <path to apps>/serverapp/server/development.ini',
+ 8. <path to apps>/serverapp/development.ini',
+ 9. <path to apps>/serverapp/config/default.json',
+ 10. <path to apps>/config/default.json',
+ 11. <path to apps>/serverapp/server/default.json',
+ 12. <path to apps>/serverapp/default.json',
+ 13. <path to apps>/serverapp/config/default.ini',
+ 14. <path to apps>/config/default.ini',
+ 15. <path to apps>/serverapp/server/default.ini',
+ 16. <path to apps>/serverapp/default.ini'
 
 
 ```bash
 CONFIG_FILE=test.json node server.js
 ```
-1. ./test.json
-2. ./server/development.json
-3. ./config/development.json
-4. ../config/development.json
-5. ./development.json
-6. ./server/development.ini
-7. ./config/development.ini
-8. ../config/development.ini
-9. ./development.ini
-10. ./server/default.json
-11. ./config/default.json
-12. ../config/default.json
-13. ./default.json
-14. ./server/default.ini
-15. ./config/default.ini
-16. ../config/default.ini
-17. ./default.ini
+ 1. <path to apps>/serverapp/test.json
+ 2. <path to apps>/serverapp/config/development.json',
+ 3. <path to apps>/config/development.json',
+ 4. <path to apps>/serverapp/server/development.json',
+ 5. <path to apps>/serverapp/development.json',
+ 6. <path to apps>/serverapp/config/development.ini',
+ 7. <path to apps>/config/development.ini',
+ 8. <path to apps>/serverapp/server/development.ini',
+ 9. <path to apps>/serverapp/development.ini',
+ 10. <path to apps>/serverapp/config/default.json',
+ 11. <path to apps>/config/default.json',
+ 12. <path to apps>/serverapp/server/default.json',
+ 13. <path to apps>/serverapp/default.json',
+ 14. <path to apps>/serverapp/config/default.ini',
+ 15. <path to apps>/config/default.ini',
+ 16. <path to apps>/serverapp/server/default.ini',
+ 17. <path to apps>/serverapp/default.ini'
 
 
 ```bash
 CONFIG_PATH=/server/app node server.js
 ```
-1. /server/app/test.json
-2. /server/app/server/development.json
-3. /server/app/config/development.json
-4. /server/config/development.json
-5. /server/app/development.json
-6. /server/app/server/development.ini
-7. /server/app/config/development.ini
-8. /server/config/development.ini
-9. /server/app/development.ini
-10. /server/app/server/default.json
-11. /server/app/config/default.json
-12. /server/config/default.json
-13. /server/app/default.json
-14. /server/app/server/default.ini
-15. /server/app/config/default.ini
-16. /server/config/default.ini
-17. /server/app/default.ini
+1. /server/app/config/development.json
+2. /server/config/development.json
+3. /server/app/server/development.json
+4. /server/app/development.json
+5. /server/app/config/development.ini
+6. /server/config/development.ini
+7. /server/app/server/development.ini
+8. /server/app/development.ini
+9. /server/app/config/default.json
+10. /server/config/default.json
+11. /server/app/server/default.json
+12. /server/app/default.json
+13. /server/app/config/default.ini
+14. /server/config/default.ini
+15. /server/app/server/default.ini
+16. /server/app/default.ini
 
 
 ```bash
 CONFIG_PATH=/server/app CONFIG_FILE=test.json node server.js
 ```
 1. /server/app/test.json
-2. /server/app/server/development.json
-3. /server/app/config/development.json
-4. /server/config/development.json
+2. /server/app/config/development.json
+3. /server/config/development.json
+4. /server/app/server/development.json
 5. /server/app/development.json
-6. /server/app/server/development.ini
-7. /server/app/config/development.ini
-8. /server/config/development.ini
+6. /server/app/config/development.ini
+7. /server/config/development.ini
+8. /server/app/server/development.ini
 9. /server/app/development.ini
-10. /server/app/server/default.json
-11. /server/app/config/default.json
-12. /server/config/default.json
+10. /server/app/config/default.json
+11. /server/config/default.json
+12. /server/app/server/default.json
 13. /server/app/default.json
-14. /server/app/server/default.ini
-15. /server/app/config/default.ini
-16. /server/config/default.ini
+14. /server/app/config/default.ini
+15. /server/config/default.ini
+16. /server/app/server/default.ini
 17. /server/app/default.ini
 
 
@@ -359,21 +352,21 @@ CONFIG_PATH=/server/app CONFIG_FILE=test.json node server.js
 CONFIG_PATH=/server/app CONFIG_FILE=/config/absolute/test.json node server.js
 ```
 1. /config/absolute/test.json
-2. /server/app/server/development.json
-3. /server/app/config/development.json
-4. /server/config/development.json
+2. /server/app/config/development.json
+3. /server/config/development.json
+4. /server/app/server/development.json
 5. /server/app/development.json
-6. /server/app/server/development.ini
-7. /server/app/config/development.ini
-8. /server/config/development.ini
+6. /server/app/config/development.ini
+7. /server/config/development.ini
+8. /server/app/server/development.ini
 9. /server/app/development.ini
-10. /server/app/server/default.json
-11. /server/app/config/default.json
-12. /server/config/default.json
+10. /server/app/config/default.json
+11. /server/config/default.json
+12. /server/app/server/default.json
 13. /server/app/default.json
-14. /server/app/server/default.ini
-15. /server/app/config/default.ini
-16. /server/config/default.ini
+14. /server/app/config/default.ini
+15. /server/config/default.ini
+16. /server/app/server/default.ini
 17. /server/app/default.ini
 
 
