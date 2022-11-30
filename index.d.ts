@@ -7,6 +7,7 @@ declare class DynamicConfig {
     hasEnv(key: string): boolean;
     hasConfig(key: string): boolean;
     get(key: string = undefined, defaultValue: any = null, throwOnDefault: boolean = false): any;
+    getAsString(key: string = undefined, defaultValue: any = null, throwOnDefault: boolean = false): string;
     getEnv(key: string, defaultValue: any = null): [any, boolean];
     getConfig(key: string, defaultValue: any = null): [any, boolean];
     addFuse(key: string): void;

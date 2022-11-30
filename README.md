@@ -162,6 +162,12 @@ If the parameter throwOnDefault is set to true then an exception will be thrown 
 If the key is omitted (or set to undefined) the config object wil be returned.
 
 
+### getAsString(key, defaultValue = "", throwOnDefault = false): value
+The same as *get* but returns a string.
+
+NULL will be returned as an empty string.
+
+
 ### getConfig(key, defaultValue = null): [value, keyFound]
 Will try to find the key in the config.
 

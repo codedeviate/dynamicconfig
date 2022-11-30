@@ -242,6 +242,14 @@ class DynamicConfig {
     return defaultValue;
   }
 
+  getAsString(key, defaultValue = null, throwOnDefault = false) {
+    const value = this.get(key, defaultValue, throwOnDefault);
+    if (value === null) {
+      return "";
+    }
+    return value.toString();
+  }
+
   set(key, value) {
     const keys = key.split(this.configSplit || this.config['__configSplit'] || '.');
     if (this.fuseList[keys.join('.')] === true) {
