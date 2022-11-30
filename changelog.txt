@@ -1,2 +1,6 @@
+v2.3.1
+* Updated README to reflect changes in the priority of config paths
+* Fixed a bug in fuseAll to correctly add all subkeys
+
 v2.3.0 - Released 2022-11-25
 This is the first official release of this package so everything is new.
