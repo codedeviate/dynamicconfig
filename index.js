@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const parserJson = require('./parsers/json.js');
 const parserIni = require('./parsers/ini.js');
-const { isObject } = require('util');
 
 class DynamicConfig {
   constructor() {
@@ -136,7 +135,7 @@ class DynamicConfig {
     }
     const keys = [];
     Object.keys(obj).forEach((key) => {
-      if (util.isObject(obj[key])) {
+      if (obj[key] && typeof (obj[key]) === 'object' && !Array.isArray(obj[key])) {
         this.getValueKeys(obj[key]).forEach((subKey) => {
           keys.push(`${key}.${subKey}`);
         });
