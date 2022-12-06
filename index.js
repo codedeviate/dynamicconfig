@@ -136,7 +136,7 @@ class DynamicConfig {
     }
     const keys = [];
     Object.keys(obj).forEach((key) => {
-      if (isObject(obj[key])) {
+      if (util.isObject(obj[key])) {
         this.getValueKeys(obj[key]).forEach((subKey) => {
           keys.push(`${key}.${subKey}`);
         });
@@ -248,6 +248,42 @@ class DynamicConfig {
       return "";
     }
     return value.toString();
+  }
+
+  getAsInt(key, defaultValue = null, throwOnDefault = false) {
+    const value = this.get(key, defaultValue, throwOnDefault);
+    if (value === null) {
+      return 0;
+    }
+    if(typeof(value) === 'number') {
+      return value;
+    }
+    if(typeof(value) === 'boolean') {
+      return value ? 1 : 0;
+    }
+    const parsedValue =  parseInt(value.toString());
+    if(isNaN(parsedValue)) {
+         return 0;
+    }
+    return parsedValue;
+  }
+
+  getAsFloat(key, defaultValue = null, throwOnDefault = false) {
+    const value = this.get(key, defaultValue, throwOnDefault);
+    if (value === null) {
+      return 0;
+    }
+    if(typeof(value) === 'number') {
+      return value;
+    }
+    if(typeof(value) === 'boolean') {
+      return value ? 1 : 0;
+    }
+    const parsedValue = parseFloat(value.toString());
+    if(isNaN(parsedValue)) {
+         return 0;
+    }
+    return parsedValue;
   }
 
   set(key, value) {

@@ -1,6 +1,6 @@
 {
   "name": "@codedv8/dynamicconfig",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "description": "Dynamic configuration storage that can use files and/or environment. Different sets of configuration can be used. Configuration files can have a fallback configuration file. Getting values from the configuration can have a default value or can throw an error if not found.",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,8 @@
     "example:fuse2": "node example/fuse2.js",
     "example:merge": "node example/merge.js",
     "example:setconfig": "node example/setconfig.js",
-    "example:setconfig2": "node example/setconfig2.js"
+    "example:setconfig2": "node example/setconfig2.js",
+    "example:totype": "node example/totype.js"
   },
   "repository": {
     "type": "git",
