@@ -167,6 +167,20 @@ The same as *get* but returns a string.
 
 NULL will be returned as an empty string.
 
+### getAsInt(key, defaultValue = "", throwOnDefault = false): int
+The same as *get* but returns the value as an integer.
+
+- NULL will be returned as 0
+- false will be returned as 0
+- true will be returned as 1
+
+### getAsFloat(key, defaultValue = "", throwOnDefault = false): float
+The same as *get* but returns the value as a float.
+
+- NULL will be returned as 0
+- false will be returned as 0
+- true will be returned as 1
+
 
 ### getConfig(key, defaultValue = null): [value, keyFound]
 Will try to find the key in the config.
