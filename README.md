@@ -181,6 +181,11 @@ The same as *get* but returns the value as a float.
 - false will be returned as 0
 - true will be returned as 1
 
+### getAsBoolean(key, defaultValue = "", throwOnDefault = false): boolean
+The same as *get* but returns the value as a boolean.
+
+- NULL will be returned as false
+
 
 ### getConfig(key, defaultValue = null): [value, keyFound]
 Will try to find the key in the config.
@@ -208,6 +213,14 @@ Returns a boolean that indicates if the key can be found in the environment.
 
 ### set(key, value)
 Sets a key in the config to the supplied value
+
+
+### envPopulate(key)
+Will copy the settings found under the supplied key to process.env making them accessible for other parts of the system.
+
+Keys that already exists in process.env will not be overwritten.
+
+If the value for the supplied key is an object then this object will be iterated and subkeys and their respective values will be added. Otherwise the value for the supplied key will be used with the key name.
 
 
 ### addFuse(key)

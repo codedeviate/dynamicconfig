@@ -47,3 +47,14 @@ console.log(devConf.get('test7'), 'becomes', devConf.getAsFloat('test7'), 'as a 
 console.log(devConf.get('test8'), 'becomes', devConf.getAsFloat('test8'), 'as a float');
 console.log(devConf.get('test9'), 'becomes', devConf.getAsFloat('test9'), 'as a float');
 console.log(devConf.get('test10'), 'becomes', devConf.getAsFloat('test10'), 'as a float');
+console.log("")
+console.log(devConf.get('test1'), 'becomes', devConf.getAsBoolean('test1'), 'as a boolean');
+console.log(devConf.get('test2'), 'becomes', devConf.getAsBoolean('test2'), 'as a boolean');
+console.log(devConf.get('test3'), 'becomes', devConf.getAsBoolean('test3'), 'as a boolean');
+console.log(devConf.get('test4'), 'becomes', devConf.getAsBoolean('test4'), 'as a boolean');
+console.log(devConf.get('test5'), 'becomes', devConf.getAsBoolean('test5'), 'as a boolean');
+console.log(devConf.get('test6'), 'becomes', devConf.getAsBoolean('test6'), 'as a boolean');
+console.log(devConf.get('test7'), 'becomes', devConf.getAsBoolean('test7'), 'as a boolean');
+console.log(devConf.get('test8'), 'becomes', devConf.getAsBoolean('test8'), 'as a boolean');
+console.log(devConf.get('test9'), 'becomes', devConf.getAsBoolean('test9'), 'as a boolean');
+console.log(devConf.get('test10'), 'becomes', devConf.getAsBoolean('test10'), 'as a boolean');

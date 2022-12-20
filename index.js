@@ -285,6 +285,20 @@ class DynamicConfig {
     return parsedValue;
   }
 
+  getAsBoolean(key, defaultValue = null, throwOnDefault = false) {
+    const value = this.get(key, defaultValue, throwOnDefault);
+    if (value === null) {
+      return false;
+    }
+    if(typeof(value) === 'number') {
+      return value ? true : false;
+    }
+    if(typeof(value) === 'boolean') {
+      return value;
+    }
+    return value ? true : false;
+  }
+
   set(key, value) {
     const keys = key.split(this.configSplit || this.config['__configSplit'] || '.');
     if (this.fuseList[keys.join('.')] === true) {
@@ -307,6 +321,23 @@ class DynamicConfig {
       delete config[lastKey];
     } else {
       config[lastKey] = value;
+    }
+  }
+
+  envPopulate(key) {
+    const [value, found] = this.getConfig(key);
+    if (found) {
+      if(typeof(value) === 'object') {
+        Object.keys(value).forEach((subkey) => {
+          if(this.hasEnv(subkey) === false) {
+            process.env[subkey] = value[subkey];
+          }
+        });
+      } else {
+        if(this.hasEnv(key) === false) {
+          process.env[key] = value;
+        }
+      }
     }
   }
 

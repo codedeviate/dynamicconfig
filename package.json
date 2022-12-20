@@ -1,6 +1,6 @@
 {
   "name": "@codedv8/dynamicconfig",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "Dynamic configuration storage that can use files and/or environment. Different sets of configuration can be used. Configuration files can have a fallback configuration file. Getting values from the configuration can have a default value or can throw an error if not found.",
   "main": "index.js",
   "scripts": {
@@ -9,12 +9,14 @@
     "example:basic:env": "NODE_ENV=development node example/basic.js",
     "example:basic:ini": "CONFIG_TYPE=ini node example/basic.js",
     "example:basic:env:ini": "NODE_ENV=production CONFIG_TYPE=ini node example/basic.js",
+    "example:envpopulate": "CONFIG_PATH=./example/ CONFIG_FILE=envpopulate.json node example/envpopulate.js",
     "example:fuse": "node example/fuse.js",
     "example:fuse2": "node example/fuse2.js",
     "example:merge": "node example/merge.js",
     "example:setconfig": "node example/setconfig.js",
     "example:setconfig2": "node example/setconfig2.js",
-    "example:totype": "node example/totype.js"
+    "example:totype": "node example/totype.js",
+    "examples": "npm run example:basic && npm run example:basic:env && npm run example:basic:ini && npm run example:basic:env:ini && npm run example:envpopulate && npm run example:fuse && npm run example:merge && npm run example:setconfig && npm run example:setconfig2 && npm run example:totype"
   },
   "repository": {
     "type": "git",
