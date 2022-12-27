@@ -154,6 +154,12 @@ describe('Function testing', function () {
         } catch (error) {
             expect(error).to.be.an('error');
         }
+        config.set("new", "value");
+        expect(config.get("new")).to.equal('value');
+        config.set("new");
+        expect(config.get("new", "dummy")).to.equal('dummy');
+
+        config.set("a.b.c", "1.2.3");
     });
 
     it('envPopulate', function () {
@@ -202,7 +208,10 @@ describe('Function testing', function () {
             'sub.sub.test',
             'sub.sub.null',
             'sub.sub.int',
-            'subsub'
+            'subsub',
+            'a',
+            'a.b',
+            'a.b.c'
           ]));
     });
 
