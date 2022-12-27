@@ -34,11 +34,13 @@ class parserIni {
                 const sectionParts = section.split(sectionSplit);
                 const subSection = sectionParts.shift();
                 const sectionRemainder = sectionParts.join(sectionSplit);
+                /* istanbul ignore else */
                 if (config[subSection] === undefined) {
                     config[subSection] = {};
                 }
                 this.addValueToAddToConfig(config[subSection], sectionRemainder, key, value, sectionSplit);
             } else {
+                /* istanbul ignore else */
                 if (config[section] === undefined) {
                     config[section] = {};
                 }

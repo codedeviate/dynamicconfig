@@ -1,3 +1,14 @@
+v2.6.1
+* Added minified version of the code
+* Added linter
+* Added builder
+* Added mocha, chai, istanbul(nyc) and jest
+* Minor code cleanup
+* Fixed flaws detected by new tests
+
+v2.6.0
+This version was overstepped due to an error in the git repository
+
 v2.5.0
 * Added envPopulate to copy config settings to global env making them accessible for other parts of the system
 * Added getAsBoolean

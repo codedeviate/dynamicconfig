@@ -5,7 +5,7 @@ const parserIni = require('./parsers/ini.js');
 
 class DynamicConfig {
   constructor() {
-    this.blowOnFuse = false;
+    this.doBlowOnFuse = false;
     this.config = null
     this.fuseList = {};
     try {
@@ -13,7 +13,7 @@ class DynamicConfig {
         this.path = process.env.CONFIG_PATH;
       } else {
         let s = path.dirname(process.argv[1])
-        if(s.indexOf('node_modules') > -1) {
+        if (s.indexOf('node_modules') > -1) {
           s = s.substring(0, s.indexOf('node_modules') - 1)
         }
         while (s !== '/') {
@@ -121,7 +121,7 @@ class DynamicConfig {
     });
     if (foundError) {
       this.config = oldConfig;
-      if (this.blowOnFuse) {
+      if (this.doBlowOnFuse) {
         throw new Error(`Key ${key} already exists`);
       }
       return false;
@@ -150,7 +150,7 @@ class DynamicConfig {
     if (root === undefined) {
       this.getValueKeys(config).forEach((key) => {
         if (this.fuseList[key] !== undefined) {
-          if (this.blowOnFuse) {
+          if (this.doBlowOnFuse) {
             throw new Error(`Key ${key} already exists`);
           }
           return false;
@@ -221,6 +221,8 @@ class DynamicConfig {
       if (config !== undefined) {
         return [config, true];
       }
+      // Unreachable code but used as failsafe
+      /* istanbul ignore next */
       return [defaultValue, false];
     }
     return [this.config[key], true];
@@ -254,15 +256,15 @@ class DynamicConfig {
     if (value === null) {
       return 0;
     }
-    if(typeof(value) === 'number') {
+    if (typeof (value) === 'number') {
       return value;
     }
-    if(typeof(value) === 'boolean') {
+    if (typeof (value) === 'boolean') {
       return value ? 1 : 0;
     }
-    const parsedValue =  parseInt(value.toString());
-    if(isNaN(parsedValue)) {
-         return 0;
+    const parsedValue = parseInt(value.toString());
+    if (isNaN(parsedValue)) {
+      return 0;
     }
     return parsedValue;
   }
@@ -272,15 +274,15 @@ class DynamicConfig {
     if (value === null) {
       return 0;
     }
-    if(typeof(value) === 'number') {
+    if (typeof (value) === 'number') {
       return value;
     }
-    if(typeof(value) === 'boolean') {
+    if (typeof (value) === 'boolean') {
       return value ? 1 : 0;
     }
     const parsedValue = parseFloat(value.toString());
-    if(isNaN(parsedValue)) {
-         return 0;
+    if (isNaN(parsedValue)) {
+      return 0;
     }
     return parsedValue;
   }
@@ -290,10 +292,10 @@ class DynamicConfig {
     if (value === null) {
       return false;
     }
-    if(typeof(value) === 'number') {
+    if (typeof (value) === 'number') {
       return value ? true : false;
     }
-    if(typeof(value) === 'boolean') {
+    if (typeof (value) === 'boolean') {
       return value;
     }
     return value ? true : false;
@@ -302,7 +304,7 @@ class DynamicConfig {
   set(key, value) {
     const keys = key.split(this.configSplit || this.config['__configSplit'] || '.');
     if (this.fuseList[keys.join('.')] === true) {
-      if (this.blowOnFuse) {
+      if (this.doBlowOnFuse) {
         throw new Error(`Key ${key} is fused`);
       } else {
         return;
@@ -327,14 +329,14 @@ class DynamicConfig {
   envPopulate(key) {
     const [value, found] = this.getConfig(key);
     if (found) {
-      if(typeof(value) === 'object') {
+      if (typeof (value) === 'object') {
         Object.keys(value).forEach((subkey) => {
-          if(this.hasEnv(subkey) === false) {
+          if (this.hasEnv(subkey) === false) {
             process.env[subkey] = value[subkey];
           }
         });
       } else {
-        if(this.hasEnv(key) === false) {
+        if (this.hasEnv(key) === false) {
           process.env[key] = value;
         }
       }
@@ -391,15 +393,15 @@ class DynamicConfig {
   }
 
   setBlowOnFuse() {
-    this.blowOnFuse = true;
+    this.doBlowOnFuse = true;
   }
 
   blowOnFuse() {
-    return this.blowOnFuse;
+    return this.doBlowOnFuse;
   }
 
   getSplit() {
-    return this.configSplit;
+    return this.configSplit || this.config['__configSplit'] || '.';
   }
 
   setSplit(split) {
@@ -408,4 +410,6 @@ class DynamicConfig {
 
 }
 
-const dynamicConfig = module.exports = new DynamicConfig();
+const dynamicConfig = new DynamicConfig();
+module.exports = dynamicConfig;
+module.exports.DynamicConfig = DynamicConfig;
