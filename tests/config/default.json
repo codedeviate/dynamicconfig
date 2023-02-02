@@ -1,0 +1,12 @@
+{
+    "test": "yes",
+    "sub": {
+        "test": 2,
+        "sub": {
+            "test": true,
+            "null": null,
+            "int": "3"
+        }
+    },
+    "subsub": "test"
+}
