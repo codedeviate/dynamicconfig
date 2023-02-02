@@ -413,3 +413,4 @@ class DynamicConfig {
 const dynamicConfig = new DynamicConfig();
 module.exports = dynamicConfig;
 module.exports.DynamicConfig = DynamicConfig;
+module.exports.default = dynamicConfig;

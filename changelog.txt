@@ -5,6 +5,7 @@ v2.6.1
 * Added mocha, chai, istanbul(nyc) and jest
 * Minor code cleanup
 * Fixed flaws detected by new tests
+* Fixed exports for better compatibility
 
 v2.6.0
 This version was overstepped due to an error in the git repository
