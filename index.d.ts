@@ -24,4 +24,10 @@ declare class DynamicConfig {
     mergeConfiguration(config: any): boolean;
     getSplit(): string;
     setSplit(split: string): void;
+    reset(): DynamicConfig;
+    is(key: string, value: any): DynamicConfig;
+    isNot(key: string, value: any): DynamicConfig;
+    hasKey(key: string): DynamicConfig;
+    hasNotKey(key: string): DynamicConfig;
+    result(): boolean;    
 }

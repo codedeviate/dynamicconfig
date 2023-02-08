@@ -14,6 +14,7 @@
     "example:basic:env": "NODE_ENV=development node example/basic.js",
     "example:basic:ini": "CONFIG_TYPE=ini node example/basic.js",
     "example:basic:env:ini": "NODE_ENV=production CONFIG_TYPE=ini node example/basic.js",
+    "example:chain": "node example/chain.js",
     "example:envpopulate": "CONFIG_PATH=./example/ CONFIG_FILE=envpopulate.json node example/envpopulate.js",
     "example:fuse": "node example/fuse.js",
     "example:fuse2": "node example/fuse2.js",

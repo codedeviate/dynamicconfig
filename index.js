@@ -408,6 +408,51 @@ class DynamicConfig {
     this.configSplit = split;
   }
 
+  reset() {
+    this.chainValue = undefined
+    return this;
+  }
+
+  is(key, value) {
+    if (this.chainValue === undefined) {
+      this.chainValue = this.get(key) === value;
+    } else {
+      this.chainValue = this.chainValue && (this.get(key) === value);
+    }
+    return this;
+  }
+
+  isNot(key, value) {
+    if (this.chainValue === undefined) {
+      this.chainValue = this.get(key) !== value;
+    } else {
+      this.chainValue = this.chainValue && (this.get(key) !== value);
+    }
+    return this;
+  }
+
+  hasNotKey(key) {
+    if (this.chainValue === undefined) {
+      this.chainValue = this.has(key) === false;
+    } else {
+      this.chainValue = this.chainValue && (this.has(key) === false);
+    }
+    return this;
+  }
+
+  hasKey(key) {
+    if (this.chainValue === undefined) {
+      this.chainValue = this.has(key);
+    } else {
+      this.chainValue = this.chainValue && this.has(key);
+    }
+    return this;
+  }
+
+  result() {
+    return this.chainValue;
+  }
+
 }
 
 const dynamicConfig = new DynamicConfig();
