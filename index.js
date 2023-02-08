@@ -408,6 +408,21 @@ class DynamicConfig {
     this.configSplit = split;
   }
 
+  chain() {
+    return new DynamicChain(this)
+  }
+
+}
+
+class DynamicChain {
+  config = undefined;
+  chainValue = undefined;
+
+  constructor(config) {
+    this.config = config;
+    this.chainValue = undefined;
+  }
+
   reset() {
     this.chainValue = undefined
     return this;
@@ -415,36 +430,36 @@ class DynamicConfig {
 
   is(key, value) {
     if (this.chainValue === undefined) {
-      this.chainValue = this.get(key) === value;
+      this.chainValue = this.config.get(key) === value;
     } else {
-      this.chainValue = this.chainValue && (this.get(key) === value);
+      this.chainValue = this.chainValue && (this.config.get(key) === value);
     }
     return this;
   }
 
   isNot(key, value) {
     if (this.chainValue === undefined) {
-      this.chainValue = this.get(key) !== value;
+      this.chainValue = this.config.get(key) !== value;
     } else {
-      this.chainValue = this.chainValue && (this.get(key) !== value);
+      this.chainValue = this.chainValue && (this.config.get(key) !== value);
     }
     return this;
   }
 
   hasNotKey(key) {
     if (this.chainValue === undefined) {
-      this.chainValue = this.has(key) === false;
+      this.chainValue = this.config.has(key) === false;
     } else {
-      this.chainValue = this.chainValue && (this.has(key) === false);
+      this.chainValue = this.chainValue && (this.config.has(key) === false);
     }
     return this;
   }
 
   hasKey(key) {
     if (this.chainValue === undefined) {
-      this.chainValue = this.has(key);
+      this.chainValue = this.config.has(key);
     } else {
-      this.chainValue = this.chainValue && this.has(key);
+      this.chainValue = this.chainValue && this.config.has(key);
     }
     return this;
   }
@@ -458,4 +473,5 @@ class DynamicConfig {
 const dynamicConfig = new DynamicConfig();
 module.exports = dynamicConfig;
 module.exports.DynamicConfig = DynamicConfig;
+module.exports.DynamicChain = DynamicChain;
 module.exports.default = dynamicConfig;

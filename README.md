@@ -269,6 +269,38 @@ Get the split character used for *get* and *set*
 Set the split character used for *get* and *set*
 
 
+### chain(): DynamicChain
+This will create a new chainable object
+
+
+### class DynamicChain
+This is a chainable object that is connected to the config object. With this object you can perform logical operation and get a boolean result based on these operations.
+
+
+#### reset(): DynamicChain
+This will reset the internal chaining result.
+
+
+#### is(key, value): DynamicChain
+This will make an AND with the internal chaining result and the result if the key has the given value.
+
+
+#### isNot(key, value): DynamicChain
+This will make an AND with the internal chaining result and the result if the key has not the given value.
+
+
+#### hasKey(key): DynamicChain
+This will make an AND with the internal chaining result and if the key exist.
+
+
+#### hasNotKey(key): DynamicChain
+This will make an AND with the internal chaining result and if the key does not exist.
+
+
+#### result(): boolean
+This will return the current value of the internal chaining result
+
+
 ## Config file priority
 If a config file is added from the env variable CONFIG_FILE then this have the top priority.
 
@@ -401,6 +433,55 @@ CONFIG_PATH=/server/app CONFIG_FILE=/config/absolute/test.json node server.js
 15. /server/config/default.ini
 16. /server/app/server/default.ini
 17. /server/app/default.ini
+
+
+## Chaining
+It is rather normal to use if statements like
+```javascript
+if(dynConf.has("KEY") && (dynConf.get("KEY2") === "VALUE")) {
+  // Do something smart
+}
+```
+This will easily become complex when you need to check multiple keys.
+
+With chaining you can do it like this instead,
+```javascript
+if(dynConf.chain().hasKey("KEY").is("KEY2", "VALUE").result()) {
+  // Do something smart
+}
+```
+
+Or if the conditions are spread out in the code you can do it like this.
+```javascript
+const chain = dynConf.chain();
+// A chunk of code
+chain.hasKey("KEY");
+// Another chunk of code
+chain.is("KEY2", "VALUE")
+// Yet another chunk of code before the result should be used
+if(chain.result()) {
+  // Do something smart
+}
+```
+
+You can even have multiple chains running in parallell
+```javascript
+const chain1 = dynConf.chain();
+const chain2 = dynConf.chain();
+// A chunk of code
+chain1.hasKey("KEY");
+chain2.hasNotKey("KEY");
+// Another chunk of code
+chain1.is("KEY2", "VALUE")
+chain2.isNot("KEY2", "VALUE")
+// Yet another chunk of code before the result should be used
+if(chain1.result()) {
+  // Do something smart
+}
+if(chain2.result()) {
+  // Do something smart
+}
+```
 
 
 ## Default values

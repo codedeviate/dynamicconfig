@@ -6,21 +6,21 @@ dynConf.set('TEST', 1);
 dynConf.set('TEST2', 'test');
 
 // Chain inline
-if(dynConf.reset().is("TEST", 1).hasKey("TEST2").result()) {
+if(dynConf.chain().is("TEST", 1).hasKey("TEST2").result()) {
     console.log("TEST1 === 1 and TEST2 is set");
 }
 
 // Another chain inline
-if(dynConf.reset().is("TEST", 1).hasNotKey("TEST2").result()) {
+if(dynConf.chain().is("TEST", 1).hasNotKey("TEST2").result()) {
     console.log("This should not be printed");
 } else {
     console.log("TEST1 === 1 and TEST2 is not set");
 }
 
 // Chain with individual calls
-dynConf.reset()
-dynConf.is("TEST", 1)
-dynConf.hasKey("TEST2")
-if(dynConf.result()) {
+const chain = dynConf.chain()
+chain.is("TEST", 1)
+chain.hasKey("TEST2")
+if(chain.result()) {
     console.log("TEST1 === 1 and TEST2 is set");
 }
