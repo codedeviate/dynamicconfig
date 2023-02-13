@@ -464,7 +464,7 @@ if(chain.result()) {
 }
 ```
 
-You can even have multiple chains running in parallell
+You can even have multiple chains running in parallel
 ```javascript
 const chain1 = dynConf.chain();
 const chain2 = dynConf.chain();
