@@ -162,6 +162,20 @@ describe('Function testing', function () {
         config.set("a.b.c", "1.2.3");
     });
 
+    it('set numeric key', function () {
+        const config2 = new DynamicConfig();
+        config2.set(2, 'no');
+        config2.addFuse(2);
+        config2.set(2, 'yes');
+        config2.setBlowOnFuse(true);
+        try {
+            config2.set(2, 'yes');
+        } catch (error) {
+            expect(error).to.be.an('error');
+        }
+        expect(config2.get(2)).to.equal('no');
+    });
+
     it('envPopulate', function () {
         config.envPopulate('subsub');
         expect(config.getEnv('subsub')[0]).to.equal("test");
@@ -181,6 +195,10 @@ describe('Function testing', function () {
         config2.addFuse(['test', 'sub.sub.test']);
         config2.set('sub.sub.test', 'no');
         expect(config2.get('sub.sub.test')).to.equal(true);
+        config2.set(2, 'yes');
+        config2.addFuse(2);
+        config2.set(2, 'no');
+        expect(config2.get(2)).to.equal('yes');
     });
 
     it('fuseAll', function () {

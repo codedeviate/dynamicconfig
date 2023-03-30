@@ -191,6 +191,15 @@ class DynamicConfig {
   }
 
   has(key) {
+    // Check if key is an array
+    if (Array.isArray(key)) {
+      for(const keyItem of key) {
+        if (this.has(keyItem)) {
+          return true;
+        }
+      }
+      return false;
+    }
     return this.hasEnv(key) || this.hasConfig(key);
   }
 
@@ -206,6 +215,9 @@ class DynamicConfig {
       return [this.config, true];
     }
     if (this.config[key] === undefined) {
+      if(typeof(key) !== 'string') {
+        return [defaultValue, false];
+      }
       if (key === '__configSplit') {
         return [this.configSplit || this.config['__configSplit'] || '.', true];
       }
@@ -229,17 +241,38 @@ class DynamicConfig {
   }
 
   get(key, defaultValue = null, throwOnDefault = false) {
+    // Check if key is an array
+    if(Array.isArray(key)) {
+      // Loop through the array
+      for(const item of key) {
+        // Check if the key exists
+        if(this.has(item)) {
+          // Return the value
+          return this.get(item);
+        }
+      }
+      // Throw an error if the key does not exist and throwOnDefault is true
+      if (throwOnDefault) {
+        throw new Error(`Key ${key} not found`);
+      }
+        // If the key does not exist, return the default value
+      return defaultValue;
+    }
+    // Check if the key if found in the environment variables
     const [envValue, envFound] = this.getEnv(key, defaultValue);
     if (envFound) {
       return envValue;
     }
+    // Check if the key if found in the configuration
     const [configValue, configFound] = this.getConfig(key, defaultValue);
     if (configFound) {
       return configValue;
     }
+    // Throw an error if the key does not exist and throwOnDefault is true
     if (throwOnDefault) {
       throw new Error(`Key ${key} not found`);
     }
+    // If the key does not exist, return the default value
     return defaultValue;
   }
 
@@ -302,6 +335,17 @@ class DynamicConfig {
   }
 
   set(key, value) {
+    if(typeof(key) !== 'string') {
+      if (this.fuseList[key] === true) {
+        if (this.doBlowOnFuse) {
+          throw new Error(`Key ${key} is fused`);
+        } else {
+          return;
+        }
+      }
+      this.config[key] = value;
+      return
+    }
     const keys = key.split(this.configSplit || this.config['__configSplit'] || '.');
     if (this.fuseList[keys.join('.')] === true) {
       if (this.doBlowOnFuse) {
@@ -350,6 +394,8 @@ class DynamicConfig {
           subkey = subkey.split(this.configSplit || this.config['__configSplit'] || '.').join('.');
           this.fuseList[subkey] = true;
         });
+      } else if(typeof(key) !== 'string') {
+        this.fuseList[key] = true;
       } else {
         key = key.split(this.configSplit || this.config['__configSplit'] || '.').join('.');
         this.fuseList[key] = true;
@@ -408,9 +454,128 @@ class DynamicConfig {
     this.configSplit = split;
   }
 
+  chain() {
+    return new DynamicChain(this)
+  }
+
+}
+
+class DynamicChain {
+  config = undefined;
+  chainValue = undefined;
+
+  constructor(config) {
+    this.config = config;
+    this.chainValue = undefined;
+  }
+
+  reset() {
+    this.chainValue = undefined
+    return this;
+  }
+
+  is(key, value) {
+    // Check if key is an array
+    if (Array.isArray(key)) {
+      let result = false;
+      // Loop through the array
+      for(const subKey of key) {
+        result = result || (this.config.get(subKey) === value);
+        if(result) break;
+      }
+      if (this.chainValue === undefined) {
+        this.chainValue = result;
+      } else {
+        this.chainValue = this.chainValue && result;
+      }
+      return this;
+    }
+    if (this.chainValue === undefined) {
+      this.chainValue = this.config.get(key) === value;
+    } else {
+      this.chainValue = this.chainValue && (this.config.get(key) === value);
+    }
+    return this;
+  }
+
+  isNot(key, value) {
+    // Check if key is an array
+    if (Array.isArray(key)) {
+      let result = true;
+      // Loop through the array
+      for(const subKey of key) {
+        result = result && (this.config.get(subKey) !== value);
+      }
+      if (this.chainValue === undefined) {
+        this.chainValue = result;
+      } else {
+        this.chainValue = this.chainValue && result;
+      }
+      return this;
+    }
+    if (this.chainValue === undefined) {
+      this.chainValue = this.config.get(key) !== value;
+    } else {
+      this.chainValue = this.chainValue && (this.config.get(key) !== value);
+    }
+    return this;
+  }
+
+  hasNotKey(key) {
+    // Check if key is an array
+    if (Array.isArray(key)) {
+      let result = true;
+      // Loop through the array
+      for(const subKey of key) {
+        result = result && (this.config.has(subKey) === false);
+      }
+      if (this.chainValue === undefined) {
+        this.chainValue = result;
+      } else {
+        this.chainValue = this.chainValue && result;
+      }
+      return this;
+    }
+    if (this.chainValue === undefined) {
+      this.chainValue = this.config.has(key) === false;
+    } else {
+      this.chainValue = this.chainValue && (this.config.has(key) === false);
+    }
+    return this;
+  }
+
+  hasKey(key) {
+    // Check if key is an array
+    if (Array.isArray(key)) {
+      let result = false;
+      // Loop through the array
+      for(const subKey of key) {
+        result = result || this.config.has(subKey);
+        if(result) break;
+      }
+      if (this.chainValue === undefined) {
+        this.chainValue = result;
+      } else {
+        this.chainValue = this.chainValue && result;
+      }
+      return this;
+    }
+    if (this.chainValue === undefined) {
+      this.chainValue = this.config.has(key);
+    } else {
+      this.chainValue = this.chainValue && this.config.has(key);
+    }
+    return this;
+  }
+
+  result() {
+    return this.chainValue;
+  }
+
 }
 
 const dynamicConfig = new DynamicConfig();
 module.exports = dynamicConfig;
 module.exports.DynamicConfig = DynamicConfig;
+module.exports.DynamicChain = DynamicChain;
 module.exports.default = dynamicConfig;

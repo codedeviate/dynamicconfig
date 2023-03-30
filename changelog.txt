@@ -1,3 +1,10 @@
+v2.7.0
+* Added chains
+* Added multiple keys
+* Updated tests
+* Fixed a bit better code converage in tests
+* Fixed an issue with non-string keys
+
 v2.6.1
 * Added minified version of the code
 * Added linter
