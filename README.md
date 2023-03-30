@@ -338,8 +338,17 @@ For the following functions it is possible to use an array of strings as the key
 - has
 - is
 - isNot
-When using an array as the key the function will treat it as a series of calls and return a response on the first key found.
 
+When using an array as the key the function will treat it as a series of calls and return a response on the first key found. The exception is *isNot* where all the keys must not match.
+
+
+*Please note that the following functions doesn't support keys as arrays*
+- *getConfig*
+- *getEnv*
+- *hasConfig*
+- *hasEnv*
+
+### Potential use cases for multiple keys
 You could rewrite the code for an array by using default values
 ```javascript
 const unreadable = config.get("test", config.get("test2", config.get("test3")))
@@ -363,6 +372,20 @@ this can now be written as
 ```javascript
 const readable = config.get(["test", "test2", "test3"], null, true)
 ```
+
+The following code
+```javascript
+if(config.get("test1") === "value" || config.get("test2") === "value" || config.get("test3") === "value") {
+  // Do something
+}
+```
+can be reduced to this
+```javascript
+if(config.is(["test1", "test2", "test3"], "value") {
+  // Do something
+}
+```
+
 
 ## Multiple keys in chains
 The following functions supports multiple keys
