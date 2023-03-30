@@ -300,6 +300,55 @@ This will make an AND with the internal chaining result and if the key does not 
 #### result(): boolean
 This will return the current value of the internal chaining result
 
+## Multiple keys
+For the following functions it is possible to use an array of strings as the key.
+- get
+- getAsString
+- getAsInt
+- getAsFloat
+- getAsBoolean
+- has
+When using an array as the key the function will treat it as a series of calls and return a response on the first key found.
+
+You could rewrite the code for an array by using default values
+```javascript
+const unreadable = config.get("test", config.get("test2", config.get("test3")))
+```
+this can now be written as
+```javascript
+const readable = config.get(["test", "test2", "test3"])
+```
+
+If you need to throw an exception if a value isn't found after attempting to find several keys it will be a much cleaner code using an array.
+```javascript
+let unreadable = config.get("test");
+if(unreadable === null) {
+  unreadable = config.get("test2");
+  if(unreadable === null) {
+    config.get("test3", null, true)
+  }
+}
+```
+this can now be written as
+```javascript
+const readable = config.get(["test", "test2", "test3"], null, true)
+```
+
+## Multiple keys in chains
+The following functions supports multiple keys
+- is
+- isNot
+- hasKey
+- hasNotKey
+
+For the is and hasKey functions the order of apperance for the keys in the array will be the order of priority for which key returns the result. Only the result from the first matching key will be returned.
+
+For the isNot and hasNotKey all keys must meet the condition.
+
+## Numeric vs string based keys
+If the key is numeric it can not use used as a key for sections. To be able to use sections the key has to be supplied as a string.
+
+The key 5 and the key "5" will yield the same result but both keys will be treated differently by the code. There will be an attempt to split the string key into parts referencing sections in the config. The numeric key will be used as is. This will have no effect other that the code is different in the functions handling keys. User wise there is no difference.
 
 ## Config file priority
 If a config file is added from the env variable CONFIG_FILE then this have the top priority.
