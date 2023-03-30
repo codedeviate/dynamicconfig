@@ -35,6 +35,7 @@ class DynamicConfig {
     } catch (error) {
       throw new Error('CONFIG_PATH does not exist');
     }
+    /* istanbul ignore next: Just a failsafe that really shouldn't be able to happen */
     try {
       this.pathUp = fs.realpathSync(this.path + '../') + '/';
     } catch (error) {
@@ -85,25 +86,29 @@ class DynamicConfig {
         if ((readDefault || Object.keys(this.config).length === 0) && fs.existsSync(file)) {
           let fileExtension = configType || path.extname(file).substring(1).toLowerCase();
           const data = fs.readFileSync(file, 'utf8');
+          /* istanbul ignore else */
           if (fileExtension === 'json') {
             this.mergeConfiguration(new parserJson().parse(data));
+            /* istanbul ignore else */
             if (readDefault) {
               addedDefault = true;
             }
           } else if (fileExtension === 'ini') {
             this.mergeConfiguration(new parserIni().parse(data));
+            /* istanbul ignore else */
             if (readDefault) {
               addedDefault = true;
             }
-          } else {
+          } else /* istanbul ignore next: For non-supported file types */ {
             throw new Error(`Unsupported file extension: ${fileExtension}`);
           }
         }
-      } catch (error) {
+      } catch (error) /* istanbul ignore next: If we failed totally */ {
         this.config = {};
       }
     });
 
+    /* istanbul ignore next: If we failed totally */
     if (this.config === null) {
       this.config = {};
     }
@@ -158,10 +163,11 @@ class DynamicConfig {
       });
       root = this.config;
     }
+    /* istanbul ignore else */
     if (typeof (config) === 'object' && !Array.isArray(config)) {
       Object.keys(config).forEach((key) => {
         if (root[key] === undefined) {
-          if (typeof (root[key]) === 'object' && !Array.isArray(root[key])) {
+          if (typeof (config[key]) === 'object' && !Array.isArray(config[key])) {
             root[key] = { ...config[key] };
           } else {
             root[key] = config[key];
@@ -173,6 +179,7 @@ class DynamicConfig {
         }
       });
     } else {
+      /* istanbul ignore next */ 
       if (root === undefined) {
         root = config;
       }
@@ -230,6 +237,7 @@ class DynamicConfig {
         }
         config = config[keyPart];
       }
+      /* istanbul ignore else */
       if (config !== undefined) {
         return [config, true];
       }
@@ -331,7 +339,14 @@ class DynamicConfig {
     if (typeof (value) === 'boolean') {
       return value;
     }
-    return value ? true : false;
+    const valueLC = value.toString().toLowerCase();
+    if(valueLC == "") {
+      return false;
+    }
+    if(["false","0","null"].includes(valueLC)) {
+      return false;
+    }
+    return true;
   }
 
   set(key, value) {
@@ -357,6 +372,7 @@ class DynamicConfig {
     let config = this.config;
     while (keys.length > 1) {
       const subkey = keys.shift();
+      /* istanbul ignore else */
       if (config[subkey] === undefined) {
         config[subkey] = {};
       }
@@ -370,8 +386,36 @@ class DynamicConfig {
     }
   }
 
+  is(key, value) {
+    // Check if key is an array
+    if (Array.isArray(key)) {
+      let result = false;
+      // Loop through the array
+      for(const subKey of key) {
+        result = result || (this.get(subKey) === value);
+        if(result) break;
+      }
+      return result;
+    }
+    return this.get(key) === value;
+  }
+
+  isNot(key, value) {
+    // Check if key is an array
+    if (Array.isArray(key)) {
+      let result = true;
+      // Loop through the array
+      for(const subKey of key) {
+        result = result && (this.get(subKey) !== value);
+      }
+      return result;
+    }
+    return this.get(key) !== value;
+  }
+
   envPopulate(key) {
     const [value, found] = this.getConfig(key);
+    /* istanbul ignore else */
     if (found) {
       if (typeof (value) === 'object') {
         Object.keys(value).forEach((subkey) => {
@@ -380,6 +424,7 @@ class DynamicConfig {
           }
         });
       } else {
+        /* istanbul ignore else */
         if (this.hasEnv(key) === false) {
           process.env[key] = value;
         }

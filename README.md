@@ -161,11 +161,16 @@ If the parameter throwOnDefault is set to true then an exception will be thrown 
 
 If the key is omitted (or set to undefined) the config object wil be returned.
 
+If key is an array then the function will return the value for the first subKey that exists.
+
 
 ### getAsString(key, defaultValue = "", throwOnDefault = false): value
 The same as *get* but returns a string.
 
 NULL will be returned as an empty string.
+
+If key is an array then the function will return the value for the first subKey that exists.
+
 
 ### getAsInt(key, defaultValue = "", throwOnDefault = false): int
 The same as *get* but returns the value as an integer.
@@ -174,6 +179,9 @@ The same as *get* but returns the value as an integer.
 - false will be returned as 0
 - true will be returned as 1
 
+If key is an array then the function will return the value for the first subKey that exists.
+
+
 ### getAsFloat(key, defaultValue = "", throwOnDefault = false): float
 The same as *get* but returns the value as a float.
 
@@ -181,10 +189,16 @@ The same as *get* but returns the value as a float.
 - false will be returned as 0
 - true will be returned as 1
 
+If key is an array then the function will return the value for the first subKey that exists.
+
+
 ### getAsBoolean(key, defaultValue = "", throwOnDefault = false): boolean
 The same as *get* but returns the value as a boolean.
 
 - NULL will be returned as false
+- "null", "false", "0" will be returned as false
+
+If key is an array then the function will return the value for the first subKey that exists.
 
 
 ### getConfig(key, defaultValue = null): [value, keyFound]
@@ -202,6 +216,8 @@ The return value is an array where the first value is the values that is returne
 ### has(key): boolean
 Returns a boolean that indicates if the key can be found in either the environment or the config.
 
+If key is an array then the function will return true for the first subKey that exists or false if none matches.
+
 
 ### hasConfig(key): boolean
 Returns a boolean that indicates if the key can be found in the config.
@@ -213,6 +229,18 @@ Returns a boolean that indicates if the key can be found in the environment.
 
 ### set(key, value)
 Sets a key in the config to the supplied value
+
+
+#### is(key, value): boolean
+This will test if the key is equal to the given value and return true or false.
+
+If key is an array then the function will return true for the first subKey that matches the given value or false if none matches.
+
+
+#### isNot(key, value): boolean
+This will test if the key differs from the the given value and return true or false.
+
+If key is an array then the function will return false if any of the subKeys matches the given value it true if none matches.
 
 
 ### envPopulate(key)
@@ -308,6 +336,8 @@ For the following functions it is possible to use an array of strings as the key
 - getAsFloat
 - getAsBoolean
 - has
+- is
+- isNot
 When using an array as the key the function will treat it as a series of calls and return a response on the first key found.
 
 You could rewrite the code for an array by using default values
