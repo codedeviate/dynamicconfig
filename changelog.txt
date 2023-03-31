@@ -1,3 +1,9 @@
+v2.8.0
+* Added is and isNot to config class
+* Completed coverage test
+* Fixed some minor logical flaws
+* getAsBoolean now returns false for the strings "null", "false" and "0"
+
 v2.7.0
 * Added chains
 * Added multiple keys

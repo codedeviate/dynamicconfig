@@ -39,6 +39,18 @@ describe('Function testing', function () {
     });
 
     it('setConfiguration', function () {
+        const config2 = new DynamicConfig();
+        config2.setConfiguration({ test: 'yes' });
+        expect(config2.get('test')).to.equal('yes');
+        config2.addFuse('test');
+        config2.setConfiguration({ test: 'no' });
+        expect(config2.get('test')).to.equal('yes');
+        config2.setBlowOnFuse();
+        try {
+            config2.setConfiguration({ test: 'no' });
+        } catch (error) {
+            expect(error).to.be.an('error');
+        }
     });
 
     it('getValueKeys', function () {
@@ -47,6 +59,19 @@ describe('Function testing', function () {
     });
 
     it('mergeConfiguration', function () {
+        const config2 = new DynamicConfig();
+        config2.setConfiguration({});
+        config2.mergeConfiguration({ test: 'yes', test2: { test3: 'no' } });
+        expect(config2.get('test')).to.equal('yes');
+        config2.addFuse('test');
+        config2.mergeConfiguration({ test: 'yes', test2: { test3: 'no' } , test4: { test5: 'no' } });
+        expect(config2.get('test')).to.equal('yes');
+        config2.setBlowOnFuse();
+        try {
+            config2.mergeConfiguration({ test: 'yes', test2: { test3: 'no' } });
+        } catch (error) {
+            expect(error).to.be.an('error');
+        }
     });
 
     it('hasEnv', function () {
@@ -103,6 +128,8 @@ describe('Function testing', function () {
         expect(test).to.equal('2');
         const test2 = config.getAsString('sub.sub.null', 'default');
         expect(test2).to.equal('');
+        const test3 = config.getAsString('test');
+        expect(test3).to.equal('yes');
     });
 
     it('getAsInt', function () {
@@ -116,6 +143,17 @@ describe('Function testing', function () {
         expect(test4).to.equal(0);
         const test5 = config.getAsInt('sub.sub.int', 'default');
         expect(test5).to.equal(3);
+        const test6 = config.getAsInt('cnjuirowvr', true);
+        expect(test6).to.equal(1);
+        const test7 = config.getAsInt('wohsnbp', false);
+        expect(test7).to.equal(0);
+        try {
+            const test8 = config.getAsFloat('cnjuirowvr', null, true);
+        } catch (error) {
+            expect(error).to.be.an('error');
+        }
+        const test9 = config.getAsInt('wohsnbp');
+        expect(test9).to.equal(0);
     });
 
     it('getAsFloat', function () {
@@ -129,6 +167,17 @@ describe('Function testing', function () {
         expect(test4).to.equal(0);
         const test5 = config.getAsFloat('sub.sub.int', 'default');
         expect(test5).to.equal(3);
+        const test6 = config.getAsFloat('cnjuirowvr', true);
+        expect(test6).to.equal(1);
+        const test7 = config.getAsFloat('wohsnbp', false);
+        expect(test7).to.equal(0);
+        try {
+            const test8 = config.getAsFloat('cnjuirowvr', null, true);
+        } catch (error) {
+            expect(error).to.be.an('error');
+        }
+        const test9 = config.getAsFloat('wohsnbp');
+        expect(test9).to.equal(0);
     });
 
     it('getAsBoolean', function () {
@@ -142,6 +191,22 @@ describe('Function testing', function () {
         expect(test4).to.equal(true);
         const test5 = config.getAsBoolean('sub.sub.int', 'default');
         expect(test5).to.equal(true);
+        const configX = new DynamicConfig();
+        configX.set('x.x.x', '1');
+        const test6 = configX.getAsBoolean('x.x.x');
+        expect(test6).to.equal(true);
+        configX.set('x.x.y', '0');
+        const test7 = configX.getAsBoolean('x.x.y');
+        expect(test7).to.equal(false);
+        configX.set('x.x.y', '');
+        const test8 = configX.getAsBoolean('x.x.z', "");
+        expect(test8).to.equal(false);
+        configX.set('x.y.x', 1);
+        const test9 = configX.getAsBoolean('x.y.x');
+        expect(test9).to.equal(true);
+        configX.set('x.y.y', 0);
+        const test10 = configX.getAsBoolean('x.y.y');
+        expect(test10).to.equal(false);
     });
 
     it('set', function () {
@@ -252,5 +317,30 @@ describe('Function testing', function () {
     it('setSplit', function () {
         config.setSplit(':');
         expect(config.getSplit()).to.equal(':');
+    });
+
+    it('is', function () {
+        expect(config.is('test', 'yes')).to.equal(true);
+        expect(config.is('sub.sub.null', null)).to.equal(true);
+        expect(config.is('sub.sub.null', 'null')).to.equal(false);
+        expect(config.is('sub.sub.null', 'default')).to.equal(false);
+    });
+    it('is - multiple', function () {
+        expect(config.is(['test'], 'yes')).to.equal(true);
+        expect(config.is(['sub.sub.null'], null)).to.equal(true);
+        expect(config.is(['sub.sub.null'], 'null')).to.equal(false);
+        expect(config.is(['sub.sub.null'], 'default')).to.equal(false);
+    });
+    it('isNot', function () {
+        expect(config.isNot('test', 'yes')).to.equal(false);
+        expect(config.isNot('sub.sub.null', null)).to.equal(false);
+        expect(config.isNot('sub.sub.null', 'null')).to.equal(true);
+        expect(config.isNot('sub.sub.null', 'default')).to.equal(true);
+    });
+    it('isNot - multiple', function () {
+        expect(config.isNot(['test'], 'yes')).to.equal(false);
+        expect(config.isNot(['sub.sub.null'], null)).to.equal(false);
+        expect(config.isNot(['sub.sub.null'], 'null')).to.equal(true);
+        expect(config.isNot(['sub.sub.null'], 'default')).to.equal(true);
     });
 })
